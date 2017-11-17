@@ -1,0 +1,46 @@
+---
+title: "Leaflet assignment"
+author: "Peder Lewenhaupt"
+date: "15 november 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+options(warn = -1)
+library(leaflet)
+library(ggplot2)
+```
+
+```{r, echo=FALSE}
+load(file="C:/Users/Peder Lewenhaupt/Dropbox/Portfolio/R/mountdf.RData")
+```
+#The mountain adventures
+In October 2017, I visited my brother in Aalesund, Norway, where he was posted for a trainee position. On my second day there, we went on a "tur", as the norwegians call it. Basically, it means you walk, preferably up a mountain. 
+
+We walked up a mountain near Örsta, called Klovetinden. The view, the fresh air and the clean mountain water all added up to a spectacular experience, one that I hope to replicate in other places. Therefore, as a first step to more mountain adventures, I have made a map of peaks and massifs in Sweden and Scotland, and have also included the highest peaks on each continent. The location and more information about the mountains can be viewed on the leaflet-map, while the heights are displayed in a barplot below. 
+
+The data and the code are available in the github repo where you found the knitr document. 
+```{r, echo=FALSE}
+library(leaflet)
+mountIcon <- makeIcon(
+  iconUrl = "C:/Users/Peder Lewenhaupt/Pictures/snow.png", iconWidth = 45, iconHeight = 45, iconAnchorY = 0)
+
+p <- paste("<a href='", mountdf$webpage, "'>", mountdf$Name, "</a>", sep="")
+
+map <- leaflet(data=mountdf) %>% addProviderTiles(providers$CartoDB.Positron) %>% addMarkers(~lng, ~lat, popup=p, icon=mountIcon, clusterOptions = markerClusterOptions())
+map
+```
+
+```{r, echo=FALSE}
+mountplot <- ggplot(mountdf, aes(x=Name))
+mountplot <- mountplot + geom_bar(aes(y=Height, fill=Place), stat="identity", alpha=.4)
+mountplot <- mountplot + theme_light()
+mountplot <- mountplot + theme(axis.title.x = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1, size = 9)) + ylab("Height (meters)")
+
+mountplot
+```
+
